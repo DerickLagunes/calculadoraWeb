@@ -55,6 +55,47 @@ public class DaoUsuario implements DaoRepository{
         return usr;
     }
 
+    public Object findOne(String correo, String contra){
+        Usuario usr = new Usuario();
+        MysqlConector conector = new MysqlConector();
+        Connection con = conector.connect();
+        try{
+            PreparedStatement stmt =
+                    con.prepareStatement("select * from usuarios " +
+                            "where correo = ? AND contra = sha2(?,224)");
+            stmt.setString(1,correo);
+            stmt.setString(2,contra);
+            ResultSet res = stmt.executeQuery();
+            if(res.next()) {
+                usr.setId(res.getInt("id"));
+                usr.setNombre(res.getString("nombre"));
+                usr.setCorreo(res.getString("correo"));
+                usr.setContra(res.getString("contra"));
+            }
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return usr;
+    }
+
+    public boolean findOne(String correo){
+        MysqlConector conector = new MysqlConector();
+        Connection con = conector.connect();
+        try{
+            PreparedStatement stmt =
+                    con.prepareStatement("select * from usuarios " +
+                            "where correo = ?");
+            stmt.setString(1,correo);
+            ResultSet res = stmt.executeQuery();
+            if(res.next()) {
+                return true;
+            }
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
     @Override
     public boolean update(int id, Usuario usr) {
         boolean res = false;

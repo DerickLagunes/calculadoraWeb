@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -61,7 +62,32 @@
         <h1>Usuario: <%=u.getNombre()%></h1>
 <% } %>
 
-<a href="hello-servlet">Hello Servlet</a>
+<a href="vistaUsuarios.jsp">Vista usuarios</a>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <c:if test="${not empty sesion}">
+                <h1>Bienvenido ${sesion.nombre}</h1>
+                <c:if test="${not empty tipoSesion}">
+                    <h1>Eres un usuario tipo ${tipoSesion}</h1>
+                </c:if>
+            </c:if>
+            <c:if test="${empty sesion}">
+            <form action="login" method="post">
+                <label>Correo:</label>
+                <input type="email" name="correo" required="">
+                <br/>
+                <lable>Contraseña:</lable>
+                <input type="password" name="contra" required="">
+                <br/>
+                <input type="submit" value="Iniciar sesión">
+            </form>
+            </c:if>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     function cambiar(tipoCambio){
         document.getElementById("tipo").value = tipoCambio;
