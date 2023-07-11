@@ -55,6 +55,23 @@ public class DaoUsuario implements DaoRepository{
         return usr;
     }
 
+    public boolean findCodigo(String codigo) {
+        MysqlConector con = new MysqlConector();
+        Connection connection = con.connect();
+        try {
+            PreparedStatement stmt =
+                    connection.prepareStatement("select * from usuarios where codigo=?");
+            stmt.setString(1,codigo);
+            ResultSet res = stmt.executeQuery();
+            if (res.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
     public Object findOne(String correo, String contra){
         Usuario usr = new Usuario();
         MysqlConector conector = new MysqlConector();
@@ -94,6 +111,29 @@ public class DaoUsuario implements DaoRepository{
             throw new RuntimeException(e);
         }
         return false;
+    }
+
+    public Usuario findOne2(String correo){
+        Usuario usr = new Usuario();
+        MysqlConector conector = new MysqlConector();
+        Connection con = conector.connect();
+        try{
+            PreparedStatement stmt =
+                    con.prepareStatement("select * from usuarios " +
+                            "where correo = ?");
+            stmt.setString(1,correo);
+            ResultSet res = stmt.executeQuery();
+            if(res.next()) {
+                usr.setId(res.getInt("id"));
+                usr.setNombre(res.getString("nombre"));
+                usr.setCorreo(res.getString("correo"));
+                usr.setContra(res.getString("contra"));
+                usr.setCodigo(res.getString("codigo"));
+            }
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return usr;
     }
 
     @Override

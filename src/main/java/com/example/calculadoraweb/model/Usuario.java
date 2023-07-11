@@ -6,6 +6,7 @@ public class Usuario {
     private String nombre;
     private String correo;
     private String contra;
+    private String codigo;
 
     public Usuario(int id, String nombre, String correo, String contra) {
         this.id = id;
@@ -46,5 +47,13 @@ public class Usuario {
 
     public void setId(int id){
         this.id = id;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 }

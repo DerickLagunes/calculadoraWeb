@@ -1,6 +1,7 @@
 package com.example.calculadoraweb.controller;
 
 import com.example.calculadoraweb.model.DaoUsuario;
+import com.example.calculadoraweb.model.Usuario;
 import com.example.calculadoraweb.utils.SendMail;
 
 import javax.servlet.ServletException;
@@ -24,14 +25,38 @@ public class RecuperacionServlet extends HttpServlet {
             //Le mandaria un correo con el codigo para recuperar su contraseña
             if(existe){
                 SendMail mail = new SendMail();
-                String codigo = "";
+                Usuario usr = dao.findOne2(email);
+                String codigo = usr.getCodigo();
+                String url = req.getRequestURL().toString();
                 mail.sendEmail(email,
                         "Recuperación de contraseña",
-                        "Por favor, da clcic en el siguiente enlace para recuperar tu contraseña <br><br> <a href=\"http://localhost:8081/recuperacion.jsp?codigo="+codigo+"\">Da click aqui</a> ");
+                        "Por favor, da click en el siguiente enlace" +
+                                " para recuperar tu contraseña <br><br> " +
+                                "<a href=\""+url+"?codigo="+codigo+"\">" +
+                                "Da click aqui</a> ");
             }
         //Si no existe:
             //1 hacer nada osea regresar AL INDEX
             //2 avisarle al usuario que ese correo no existe en la BD
         resp.sendRedirect("index.jsp");
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String codigo = req.getParameter("codigo");
+        DaoUsuario dao = new DaoUsuario();
+        //primero checar que el codigo corresponda al que esta en la BD
+        if(dao.findCodigo(codigo)){
+            //Si existe el codigo
+            // Si si corresponde mandar al usuario a un formulario
+            resp.sendRedirect("nuevaContrasena.jsp");
+            //para que me de su nueva contraseña
+            //Va actualizar la contraseña del usuario y ademas debe de
+            //actulaizar el codigo en la base de datos
+        }else{
+            //Decirle al usuario que su codigo no es valido y no puede cambiar contraseña
+        }
+
+
     }
 }
