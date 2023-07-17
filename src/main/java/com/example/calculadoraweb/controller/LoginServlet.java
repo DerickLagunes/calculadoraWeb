@@ -28,7 +28,7 @@ public class LoginServlet extends HttpServlet {
         }else{
 
         }
-        resp.sendRedirect("vistaUsuarios.jsp");
+        resp.sendRedirect("index.jsp");
     }
 
     @Override

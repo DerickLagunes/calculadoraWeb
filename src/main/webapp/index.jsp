@@ -1,6 +1,8 @@
 <%@ page import="com.example.calculadoraweb.model.Usuario" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="com.example.calculadoraweb.model.DaoIngredientes" %>
+<%@ page import="com.example.calculadoraweb.model.Ingrediente" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -87,6 +89,38 @@
         </div>
     </div>
 </div>
+
+<form method="post" action="ServletPizza">
+    <label>Especialidad:</label>
+    <input type="text" name="especialidad" />
+    <label>Tipo:</label>
+    <select name="tipo">
+        <option value="1" selected>Rellena de queso</option>
+        <option value="2">Normal</option>
+        <option value="3">Orilla crujiente</option>
+    </select>
+    <label>Tamaño:</label>
+    <select name="tamano">
+        <option value="mediana">Mediana</option>
+        <option value="grande" selected>Grande</option>
+        <option value="familiar">Familiar</option>
+    </select>
+    <label>Precio:</label>
+    <input type="number" maxlength="5" name="precio" />
+    <label>Ingredientes:</label>
+    <%
+        DaoIngredientes dao = new DaoIngredientes();
+        List<Ingrediente> lista = dao.findAll();
+        request.setAttribute("lista",lista);
+    %>
+    <select multiple name="ingredientes">
+        <c:forEach items="${lista}" var="i">
+            <option value="${i.id}">${i.nombre}</option>
+        </c:forEach>
+    </select>
+    <input type="submit" value="registrar pizza">
+
+</form>
 
 <script type="text/javascript">
     function cambiar(tipoCambio){
