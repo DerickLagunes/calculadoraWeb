@@ -113,18 +113,95 @@
         List<Ingrediente> lista = dao.findAll();
         request.setAttribute("lista",lista);
     %>
-    <select multiple name="ingredientes">
+    <select id="ing" multiple name="ingredientes">
         <c:forEach items="${lista}" var="i">
             <option value="${i.id}">${i.nombre}</option>
         </c:forEach>
     </select>
+    <button type="button" id="mod" onclick=""
+            data-bs-toggle="modal" data-bs-target="#nuevoIngrediente">
+        Registrar nuevo
+    </button>
     <input type="submit" value="registrar pizza">
 
 </form>
 
+<div id="nuevoIngrediente" class="modal"
+     data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Registrar nuevo ingrediente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="ingrediente" method="post" action="#">
+                    <label>Nombre del ingrediente:</label><br>
+                    <input required type="text" name="nombre_ingrediente" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button onclick="enviar()" type="button" class="btn btn-primary">Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     function cambiar(tipoCambio){
         document.getElementById("tipo").value = tipoCambio;
+    }
+
+    function recibir(){
+        let req = new XMLHttpRequest();
+        let select = document.getElementById("ing");
+
+        select.replaceChildren(); //Quitar los option que ya estaban/
+
+        req.open("GET","IngredienteServlet",true);
+        req.onload = function () {
+            if(req.readyState == 4 && req.status == 200){
+                let respuesta = JSON.parse(req.responseText);
+                for(let key in respuesta){
+                    if(respuesta.hasOwnProperty(key)){
+                        //Crear los elementos del select
+                        let option = document.createElement("option");
+                        option.setAttribute("value",respuesta[key].id);
+                        option.text = respuesta[key].nombre;
+
+                        select.appendChild(option)
+                    }
+                }
+
+            }else{
+                alert("error");
+            }
+        };
+        req.send(null);
+    }
+
+    function enviar(){
+        let form = document.getElementById("ingrediente");
+
+        let req = new XMLHttpRequest();
+        req.open("POST","IngredienteServlet",true);
+        req.onload = function () {
+            if(req.readyState == 4 && req.status == 200){
+                //Significa que to-do salio bien
+                alert(req.responseText);
+                let miModal = document.getElementById("nuevoIngrediente");
+                let modal = bootstrap.Modal.getInstance(miModal);
+                modal.hide();
+                //Metodo para actualizar los ingredientes
+                recibir();
+            }else{
+                //Que hubo un error o que algo salio mal...
+                alert("Algo salio mal :("+req.responseText);
+            }
+        };
+        req.send(new FormData(form));
+        return false;
     }
 </script>
 <script src="assets/js/bootstrap.js" type="text/javascript"></script>

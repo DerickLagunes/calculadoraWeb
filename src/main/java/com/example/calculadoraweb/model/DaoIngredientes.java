@@ -34,4 +34,20 @@ public class DaoIngredientes {
         return lista;
 
     }
+
+    public boolean insert(Ingrediente i) {
+        boolean flag = false;
+        MysqlConector conector = new MysqlConector();
+        Connection con = conector.connect();
+        try {
+            PreparedStatement stmt = con.prepareStatement(
+                    "insert into ingredientes(nombre) values(?)"
+            );
+            stmt.setString(1,i.getNombre());
+            flag = stmt.executeUpdate() == 0 ? false:true;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return flag;
+    }
 }
