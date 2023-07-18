@@ -90,6 +90,10 @@
     </div>
 </div>
 
+<form action="MenuServlet" method="post">
+    <button type="submit" >Descargar menu</button>
+</form>
+
 <form method="post" action="ServletPizza">
     <label>Especialidad:</label>
     <input type="text" name="especialidad" />
